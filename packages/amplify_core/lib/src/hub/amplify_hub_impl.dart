@@ -17,6 +17,7 @@ import 'dart:async';
 
 import 'package:amplify_core/amplify_core.dart';
 import 'package:async/async.dart';
+import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 /// {@template amplify_core.hub.amplify_hub_impl}
@@ -29,9 +30,15 @@ class AmplifyHubImpl extends AmplifyHub {
   /// {@macro amplify_core.hub.amplify_hub_impl}
   AmplifyHubImpl() : super.protected();
 
-  final Map<HubChannel, StreamCompleter> _streamCompleters = {};
-  final Map<HubChannel, StreamGroup> _availableStreams = {};
+  final Map<HubChannel, StreamCompleter<HubEvent>> _streamCompleters = {};
+  final Map<HubChannel, StreamGroup<HubEvent>> _availableStreams = {};
   final Map<HubChannel, List<StreamSubscription>> _subscriptions = {};
+
+  @override
+  Map<HubChannel, Stream<HubEvent>> get availableStreams =>
+      UnmodifiableMapView(_availableStreams.map(
+        (channel, group) => MapEntry(channel, group.stream),
+      ));
 
   StreamGroup<E>
       _initChannel<HubEventPayload, E extends HubEvent<HubEventPayload>>(
@@ -47,10 +54,9 @@ class AmplifyHubImpl extends AmplifyHub {
   }
 
   @override
-  StreamSubscription<E>
-      listen<HubEventPayload, E extends HubEvent<HubEventPayload>>(
-    HubChannel<HubEventPayload, E> channel,
-    Listener<HubEventPayload, E> listener, {
+  StreamSubscription<HubEvent> listen(
+    HubChannel channel,
+    HubListener listener, {
     Function? onError,
   }) {
     final subscription = _initChannel(channel).stream.listen(

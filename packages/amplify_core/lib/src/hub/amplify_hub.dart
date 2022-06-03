@@ -21,8 +21,7 @@ import 'package:meta/meta.dart';
 import 'amplify_hub_impl.dart';
 
 /// A [HubEvent] listener, passed to [AmplifyHub.listen].
-typedef Listener<HubEventPayload, E extends HubEvent<HubEventPayload>> = void
-    Function(E event);
+typedef HubListener = void Function(HubEvent event);
 
 /// {@template amplify_core.hub.amplify_hub}
 /// Amplify Hub provides realtime notifications to events in the different
@@ -38,16 +37,18 @@ abstract class AmplifyHub implements Closeable {
   @protected
   AmplifyHub.protected();
 
+  /// The available streams for listening.
+  Map<HubChannel, Stream<HubEvent>> get availableStreams;
+
   /// Listens to the Hub [channel] for events produced from all plugins in the
-  /// channel's category.
+  /// channel's categories.
   ///
   /// Optionally, [onError] may be specified which will be passed to
   /// [Stream.listen]. It must be of type `void Function(Object error)` or
   /// `void Function(Object error, StackTrace)`.
-  StreamSubscription<E>
-      listen<HubEventPayload, E extends HubEvent<HubEventPayload>>(
-    HubChannel<HubEventPayload, E> channel,
-    Listener<HubEventPayload, E> listener, {
+  StreamSubscription<HubEvent> listen(
+    HubChannel channel,
+    HubListener listener, {
     Function? onError,
   });
 

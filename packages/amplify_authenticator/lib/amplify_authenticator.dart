@@ -572,8 +572,8 @@ class _AuthenticatorState extends State<Authenticator> {
   Future<void> _setUpHubSubscription() async {
     // the stream does not exist until configuration is complete
     await Amplify.asyncConfig;
-    _hubSubscription =
-        Amplify.Hub.listen(HubChannel.Auth, (AuthHubEvent event) {
+    _hubSubscription = Amplify.Hub.listen(HubChannel.Auth, (event) {
+      event as AuthHubEvent;
       switch (event.eventType) {
         case AuthHubEventType.signedOut:
           _stateMachineBloc.add(

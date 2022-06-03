@@ -36,7 +36,7 @@ void main() {
     test('single channel, single subscription', () {
       Amplify.Hub.addChannel(HubChannel.Auth, controller.stream);
 
-      final Completer<AuthHubEvent> subscriber = Completer();
+      final Completer<Object?> subscriber = Completer();
       Amplify.Hub.listen(HubChannel.Auth, subscriber.complete);
 
       expect(
@@ -49,7 +49,7 @@ void main() {
     });
 
     test('can listen before channel registered', () {
-      final Completer<AuthHubEvent> subscriber = Completer();
+      final Completer<Object?> subscriber = Completer();
       expect(
         () => Amplify.Hub.listen(HubChannel.Auth, subscriber.complete),
         returnsNormally,
@@ -71,10 +71,10 @@ void main() {
     test('single channel, multiple subscriptions', () {
       Amplify.Hub.addChannel(HubChannel.Auth, controller.stream);
 
-      final Completer<AuthHubEvent> subscriber1 = Completer();
+      final Completer<Object?> subscriber1 = Completer();
       Amplify.Hub.listen(HubChannel.Auth, subscriber1.complete);
 
-      final Completer<AuthHubEvent> subscriber2 = Completer();
+      final Completer<Object?> subscriber2 = Completer();
       Amplify.Hub.listen(HubChannel.Auth, subscriber2.complete);
 
       expect(
@@ -97,7 +97,7 @@ void main() {
 
       var events = 0;
       final Completer<void> subscriber = Completer();
-      Amplify.Hub.listen(HubChannel.Auth, (AuthHubEvent event) {
+      Amplify.Hub.listen(HubChannel.Auth, (event) {
         if (++events == 2) {
           subscriber.complete();
         }
@@ -119,7 +119,7 @@ void main() {
 
       var subscriber1Events = 0;
       final Completer<void> subscriber1 = Completer();
-      Amplify.Hub.listen(HubChannel.Auth, (AuthHubEvent event) {
+      Amplify.Hub.listen(HubChannel.Auth, (event) {
         if (++subscriber1Events == 2) {
           subscriber1.complete();
         }
@@ -127,7 +127,7 @@ void main() {
 
       var subscriber2Events = 0;
       final Completer<void> subscriber2 = Completer();
-      Amplify.Hub.listen(HubChannel.Auth, (AuthHubEvent event) {
+      Amplify.Hub.listen(HubChannel.Auth, (event) {
         if (++subscriber2Events == 2) {
           subscriber2.complete();
         }
